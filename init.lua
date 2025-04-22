@@ -88,6 +88,11 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- See `:help mapleader`
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+vim.keymap.set('n', '<leader>e', function()
+  vim.diagnostic.open_float(nil, { max_width = 250, noremap = true, silent = true })
+end)
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { noremap = true, silent = true })
 
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
@@ -418,11 +423,12 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          mappings = {
+            i = { ['<c-d>'] = require('telescope.actions').delete_buffer },
+            n = { ['<c-d>'] = require('telescope.actions').delete_buffer },
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {
@@ -446,7 +452,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader><leader>', function()
+        require('telescope.builtin').buffers { sort_mru = true, ignore_current_buffer = false }
+      end, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -995,6 +1003,119 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
+  {
+    'folke/trouble.nvim',
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        '<leader>xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        '<leader>xs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        '<leader>xl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+      {
+        '<leader>xL',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = 'Location List (Trouble)',
+      },
+      {
+        '<leader>xQ',
+        '<cmd>Trouble qflist toggle<cr>',
+        desc = 'Quickfix List (Trouble)',
+      },
+    },
+  },
+  {
+    'nvim-pack/nvim-spectre',
+    event = 'VeryLazy',
+    keys = {
+      -- Replace in project (global search & replace)
+      {
+        '<leader>rp',
+        function()
+          require('spectre').toggle()
+        end,
+        desc = 'Spectre: Replace in Project',
+      },
+      -- Replace in current file
+      {
+        '<leader>sp',
+        function()
+          require('spectre').open_file_search { select_word = true }
+        end,
+        desc = 'Spectre: Replace in Current File',
+      },
+
+      -- Replace visual selection
+
+      {
+        '<leader>rv',
+        function()
+          require('spectre').open_visual()
+        end,
+        mode = 'v',
+        desc = 'Spectre: Replace Selection',
+      },
+      -- Replace word under cursor (normal mode only)
+      {
+        '<leader>rw',
+        function()
+          require('spectre').open_visual { select_word = true }
+        end,
+        mode = 'n',
+        desc = 'Spectre: Replace Word Under Cursor',
+      },
+    },
+    config = function()
+      require('spectre').setup {
+        open_cmd = 'vnew',
+        live_update = true,
+        is_insert_mode = true,
+      }
+    end,
+  },
+  {
+
+    'IogaMaster/neocord',
+    event = 'VeryLazy',
+    config = function()
+      require('neocord').setup {}
+    end,
+  },
+  {
+    'mistricky/codesnap.nvim',
+    lazy = true,
+    build = 'make',
+    keys = {
+      { '<leader>cc', '<cmd>CodeSnapSave<cr>', mode = 'x', desc = 'Save selected code snapshot' },
+    },
+    opts = {
+      save_path = '~/Pictures',
+      has_breadcrumbs = true,
+      bg_theme = 'grape',
+      watermark = '',
+      title = '',
+    },
+    config = function(_, opts)
+      require('codesnap').setup(opts)
+    end,
+  },
+
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -1007,7 +1128,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
