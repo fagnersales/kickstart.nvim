@@ -88,15 +88,18 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- See `:help mapleader`
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-vim.keymap.set('n', '<leader>e', function()
-  vim.diagnostic.open_float(nil, { max_width = 250, noremap = true, silent = true })
-end)
-vim.keymap.set('n', '<C-u>', '<C-u>zz', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-e>', vim.diagnostic.open_float, { noremap = true, silent = true })
+vim.keymap.set('n', '<C-g>', '<C-u>zz', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-q>', '<C-^>', { desc = 'Go to the last buffer' })
 
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -512,6 +515,9 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
+      vim.diagnostic.config {
+        float = { border = 'rounded' },
+      }
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -702,6 +708,7 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
+        biome = {},
         --
 
         lua_ls = {
