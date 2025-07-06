@@ -256,7 +256,13 @@ require('lazy').setup({
     'stevearc/oil.nvim',
     ---@module 'oil'
     ---@type oil.SetupOpts
-    opts = {},
+    opts = {
+      columns = { 'icon', 'size', 'mtime' },
+      delete_to_trash = true,
+      view_options = {
+        show_hidden = true,
+      },
+    },
     -- Optional dependencies
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
@@ -284,7 +290,13 @@ require('lazy').setup({
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`.
   --
-  -- See `:help gitsigns` to understand what the configuration keys do
+  {
+    'windwp/nvim-ts-autotag',
+    ft = { 'typescriptreact', 'tsx' },
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
+  }, -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {

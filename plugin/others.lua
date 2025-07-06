@@ -29,3 +29,5 @@ local function go_to_file_in_comment()
 end
 
 vim.keymap.set('n', '<leader>gfc', go_to_file_in_comment, { desc = '[G]o to [F]ile in [C]omment' })
+
+vim.keymap.set('n', 'gma', '`a', { noremap = true, silent = true, desc = "Jump to mark 'a'" })

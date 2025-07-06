@@ -4,6 +4,12 @@
 
 return {
   {
+    'windwp/nvim-ts-autotag',
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
+  },
+  {
     'lewis6991/gitsigns.nvim',
     opts = {
       on_attach = function(bufnr)
